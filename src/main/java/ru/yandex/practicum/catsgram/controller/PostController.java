@@ -1,7 +1,6 @@
 package ru.yandex.practicum.catsgram.controller;
 
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.catsgram.exception.NotFoundException;
 import ru.yandex.practicum.catsgram.model.Post;
 import ru.yandex.practicum.catsgram.service.PostService;
 
@@ -18,7 +17,7 @@ public class PostController {
 
     @GetMapping("/{id}")
     public Post getPostById(@PathVariable int id) {
-        return postService.getPostById(id).orElseThrow(() -> new NotFoundException("Пост с id: " + id + " не найден."));
+        return postService.getPostById(id);
     }
 
     @GetMapping
