@@ -9,7 +9,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class PostService {
@@ -19,7 +18,6 @@ public class PostService {
     public PostService(UserService userService) {
         this.userService = userService;
     }
-
 
     public Collection<Post> findAll() {
         return posts.values();
@@ -60,11 +58,12 @@ public class PostService {
         throw new NotFoundException("Пост с id = " + newPost.getId() + " не найден");
     }
 
-    public Optional<Post> getPostById(int postId) {
+    public Post getPostById(int postId) {
         return posts.values()
                 .stream()
                 .filter((post) -> post.getId() == postId)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Пост с id: " + postId + " не найден."));
     }
 
     private long getNextId() {
