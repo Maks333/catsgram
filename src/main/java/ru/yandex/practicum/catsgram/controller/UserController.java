@@ -1,7 +1,6 @@
 package ru.yandex.practicum.catsgram.controller;
 
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.catsgram.exception.NotFoundException;
 import ru.yandex.practicum.catsgram.model.User;
 import ru.yandex.practicum.catsgram.service.UserService;
 
@@ -18,8 +17,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable int id) {
-        return userService.findUserById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id: " + id + " не найден"));
+        return userService.findUserById(id);
     }
 
     @GetMapping
