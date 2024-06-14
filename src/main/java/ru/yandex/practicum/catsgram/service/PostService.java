@@ -30,8 +30,7 @@ public class PostService {
             throw new ConditionsNotMetException("Описание не может быть пустым");
         }
 
-        boolean userNotPresent = userService.findUserById(post.getAuthorId()).isEmpty();
-        if (userNotPresent) {
+        if (userService.findUserById(post.getAuthorId()) == null) {
             throw new ConditionsNotMetException("Пользователя с id: " + post.getAuthorId() + "не найден.");
         }
 
@@ -46,8 +45,7 @@ public class PostService {
             throw new ConditionsNotMetException("Id должен быть указан");
         }
 
-        boolean userNotPresent = userService.findUserById(newPost.getAuthorId()).isEmpty();
-        if (userNotPresent) {
+        if (userService.findUserById(newPost.getAuthorId()) == null) {
             throw new ConditionsNotMetException("Пользователя с id: " + newPost.getAuthorId() + "не найден.");
         }
 
