@@ -79,11 +79,9 @@ public class UserService {
         return ++currentMaxId;
     }
 
-    public Optional<Long> findUserById(long userId) {
+    public Optional<User> findUserById(long userId) {
         return users.values().stream()
-                .map(User::getId)
-                .filter(id -> userId == id)
-                .findFirst()
-                .or(Optional::empty);
+                .filter(user -> user.getId() == userId)
+                .findFirst();
     }
 }
