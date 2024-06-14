@@ -1,18 +1,27 @@
 package ru.yandex.practicum.catsgram.service;
 
+import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.catsgram.exception.ConditionsNotMetException;
 import ru.yandex.practicum.catsgram.exception.NotFoundException;
 import ru.yandex.practicum.catsgram.model.Post;
+import ru.yandex.practicum.catsgram.model.User;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class PostService {
     private final Map<Long, Post> posts = new HashMap<>();
+    private final UserService userService;
+
+    public PostService(UserService userService) {
+        this.userService = userService;
+    }
+
 
     public Collection<Post> findAll() {
         return posts.values();
@@ -21,6 +30,11 @@ public class PostService {
     public Post create(Post post) {
         if (post.getDescription() == null || post.getDescription().isBlank()) {
             throw new ConditionsNotMetException("Описание не может быть пустым");
+        }
+
+        boolean userNotPresent = userService.findUserById(post.getAuthorId()).isEmpty();
+        if (userNotPresent) {
+            throw new ConditionsNotMetException("Пользователя с id: " + post.getAuthorId() + "не найден.");
         }
 
         post.setId(getNextId());
@@ -32,6 +46,11 @@ public class PostService {
     public Post update(Post newPost) {
         if (newPost.getId() == null) {
             throw new ConditionsNotMetException("Id должен быть указан");
+        }
+        
+        boolean userNotPresent = userService.findUserById(newPost.getAuthorId()).isEmpty();
+        if (userNotPresent) {
+            throw new ConditionsNotMetException("Пользователя с id: " + newPost.getAuthorId() + "не найден.");
         }
 
         if (posts.containsKey(newPost.getId())) {
