@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -76,5 +77,13 @@ public class UserService {
                 .max()
                 .orElse(0);
         return ++currentMaxId;
+    }
+
+    public Optional<Long> findUserById(long userId) {
+        return users.values().stream()
+                .map(User::getId)
+                .filter(id -> userId == id)
+                .findFirst()
+                .or(Optional::empty);
     }
 }
