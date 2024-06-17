@@ -77,7 +77,7 @@ public class PostService {
         throw new NotFoundException("Пост с id = " + newPost.getId() + " не найден");
     }
 
-    public Post getPostById(int postId) {
+    public Post getPostById(long postId) {
         return posts.values()
                 .stream()
                 .filter((post) -> post.getId() == postId)
