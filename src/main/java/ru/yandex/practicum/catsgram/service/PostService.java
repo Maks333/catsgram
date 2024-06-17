@@ -6,9 +6,7 @@ import ru.yandex.practicum.catsgram.exception.NotFoundException;
 import ru.yandex.practicum.catsgram.model.Post;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PostService {
@@ -19,8 +17,29 @@ public class PostService {
         this.userService = userService;
     }
 
-    public Collection<Post> findAll() {
-        return posts.values();
+    public Collection<Post> findAll(int from, int size, String sort) {
+        List<Post> allPosts = new ArrayList<>(posts.values());
+        if (from < 0) {
+            throw new ConditionsNotMetException("Неверный параметр для начала вывода списка");
+        }
+
+        if (size <= 0) {
+            throw new ConditionsNotMetException("Неверное колличество постов для отображения");
+        }
+
+        if (!"desc".equalsIgnoreCase(sort) && !"asc".equalsIgnoreCase(sort)) {
+            throw new ConditionsNotMetException("Неверный параметр для сортировки");
+        }
+
+        Comparator<Post> comparator = sort.equals("asc") ? Comparator.comparing(Post::getPostDate)
+                : Comparator.comparing(Post::getPostDate, Comparator.reverseOrder());
+
+        allPosts = allPosts.stream()
+                .sorted(comparator)
+                .skip(from)
+                .limit(size)
+                .toList();
+        return allPosts;
     }
 
     public Post create(Post post) {
