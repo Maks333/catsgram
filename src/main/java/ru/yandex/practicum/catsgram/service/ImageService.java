@@ -5,9 +5,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import ru.yandex.practicum.catsgram.exception.ImageFileException;
+import ru.yandex.practicum.catsgram.exception.NotFoundException;
 import ru.yandex.practicum.catsgram.model.Image;
+import ru.yandex.practicum.catsgram.model.ImageData;
 import ru.yandex.practicum.catsgram.model.Post;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +30,32 @@ public class ImageService {
 
     @Value("${catsgram.image-directory}")
     private String imageDirectory;
+
+    public ImageData getImageData(long imageId) {
+        if (!images.containsKey(imageId)) {
+            throw new NotFoundException("Изображение с id = " + imageId + " не найдено");
+        }
+        Image image = images.get(imageId);
+
+        byte[] data = loadFile(image);
+
+        return new ImageData(data, image.getOriginalFileName());
+    }
+
+    private byte[] loadFile(Image image) {
+        Path path = Paths.get(image.getFilePath());
+        if (Files.exists(path)) {
+            try {
+                return Files.readAllBytes(path);
+            } catch (IOException e) {
+                throw new ImageFileException("Ошибка чтения файла.  Id: " + image.getId()
+                        + ", name: " + image.getOriginalFileName());
+            }
+        } else {
+            throw new ImageFileException("Файл не найден. Id: " + image.getId()
+                    + ", name: " + image.getOriginalFileName());
+        }
+    }
 
     public List<Image> getPostImages(long postId) {
         return images.values()
