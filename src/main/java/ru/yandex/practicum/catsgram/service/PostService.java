@@ -3,6 +3,7 @@ package ru.yandex.practicum.catsgram.service;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.catsgram.exception.ConditionsNotMetException;
 import ru.yandex.practicum.catsgram.exception.NotFoundException;
+import ru.yandex.practicum.catsgram.exception.ParameterNotValidException;
 import ru.yandex.practicum.catsgram.model.Post;
 
 import java.time.Instant;
@@ -20,15 +21,15 @@ public class PostService {
     public Collection<Post> findAll(int from, int size, String sort) {
         List<Post> allPosts = new ArrayList<>(posts.values());
         if (from < 0) {
-            throw new ConditionsNotMetException("Неверный параметр для начала вывода списка");
+            throw new ParameterNotValidException("from", "Неверный параметр для начала вывода списка");
         }
 
         if (size <= 0) {
-            throw new ConditionsNotMetException("Неверное колличество постов для отображения");
+            throw new ParameterNotValidException("size", "Неверное колличество постов для отображения");
         }
 
         if (!"desc".equalsIgnoreCase(sort) && !"asc".equalsIgnoreCase(sort)) {
-            throw new ConditionsNotMetException("Неверный параметр для сортировки");
+            throw new ParameterNotValidException("sort", "Неверный параметр для сортировки");
         }
 
         Comparator<Post> comparator = sort.equals("asc") ? Comparator.comparing(Post::getPostDate)
